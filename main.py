@@ -124,9 +124,9 @@ states_list = [
 
 def menu():
     """Main Menu with options for user to navigate the program"""
-    print("*********")
-    print("Welcome!")
-    print("********")
+    print("******************")
+    print("     Welcome!")
+    print("******************")
 
     while True:
         print("\nChoose an item from the menu below:")
@@ -162,6 +162,7 @@ def menu():
 
 def sort_and_display_all_states():
     """Sorts the states alphabetically and displays all relevant information"""
+    # creates a new list with the states from the dictionary sorted by the 'name' key
     sorted_states = sorted(states_list, key=lambda x: x['name'])
     for state in sorted_states:
         name = state.get('name')
@@ -180,7 +181,9 @@ def search_for_state_and_return_facts():
         if match is not None:
             # gets the image path based on the root, the folder name, and the state name
             image_path = os.path.join(script_dir, 'Flowers', f'{match.get('name')}.jpg')
+            # uses the image as the background for the graph
             img = np.asarray(Image.open(image_path))
+            # plots the image and shows it to the user
             plt.imshow(img)
             plt.show()
             print("State facts for " + match.get('name') + ": ")
@@ -207,21 +210,25 @@ def show_top_5_states():
 
 def update_state_population():
     """Allows the user to update the population of a state"""
-    state_str = input("\nSearch for a state by entering its name or its"
-                      " 2-character abbreviation:\n").lower()
-    match = search_for_state(state_str)
     while True:
+        state_str = input("\nSearch for a state by entering its name or its"
+                      " 2-character abbreviation: ").lower()
+        match = search_for_state(state_str)
         if match is not None:
             print(f"SELECTED STATE: {match.get('name')}")
             print(f"CURRENT POPULATION: {int(match.get('population')):,}")
-        new_pop = input("\nWhat would you like to set the population to?: \n")
-        try:
-            new_pop = int(new_pop) # by check if the input is an integer
-            match['population'] = str(new_pop) # set the population
-            print("Population set to " + str(new_pop))
-            break
-        except ValueError:
-            print("ERROR: Please enter a whole number for the new population")
+            new_pop = input("\nWhat would you like to set the population to?: \n")
+            try:
+                new_pop = int(new_pop) # by check if the input is an integer
+                if new_pop >= 0:
+                    match['population'] = str(new_pop) # set the population
+                    print("Population set to " + str(new_pop))
+                    break
+                print("ERROR: Please enter a positive whole number for the new population")
+            except ValueError:
+                print("ERROR: Please enter a positive whole number for the new population")
+        else:
+            print("ERROR: State not found. Check your spelling and try again.")
 
 def search_for_state(state_str):
     """Search for a specific state by name or 2-digit state code"""
